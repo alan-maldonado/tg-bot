@@ -1,6 +1,7 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 
 TOKEN = os.getenv("BOT_TOKEN")
@@ -17,3 +18,16 @@ app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_chueco))
 
 app.run_polling()
+
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot OK")
+
+def start_health_server():
+    server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
+    server.serve_forever()
+
+# Lanza el servidor en segundo plano
+threading.Thread(target=start_health_server, daemon=True).start()
