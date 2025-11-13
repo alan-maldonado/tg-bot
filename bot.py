@@ -6,6 +6,9 @@ import os
 TOKEN = os.getenv("BOT_TOKEN")
 
 async def responder_chueco(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text:
+        return  # ignora si no hay texto
+
     texto = update.message.text.lower()
     if "chueco" in texto:
         await update.message.reply_text("¿Quisiste decir *chequito bebé*?", parse_mode="Markdown")
