@@ -3,6 +3,7 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
+import random
 
 TOKEN = os.getenv("BOT_TOKEN")
 
