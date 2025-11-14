@@ -4,8 +4,15 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 import random
+import re
 
 TOKEN = os.getenv("BOT_TOKEN")
+
+# Regex que detecta variantes de "chueco"
+PATRON_CHUECO = re.compile(
+    r"chue+c[oóoa]+n*|chue+k+o+|chueco",
+    re.IGNORECASE
+)
 
 # --- HANDLER DEL BOT ---
 async def responder_chueco(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -13,17 +20,22 @@ async def responder_chueco(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     texto = update.message.text.lower()
-    if "chueco" in texto:
-        respuestas = [
-            "¿Quisiste decir *chequito bebé*?",
-            "Ufff, se te chuequeó 😳",
-            "¿Chueco? Yo diría *chequito exquisito* 😌",
-            "Aguas… eso sonó bien chueco 🤭",
-            "¿Estás hablando del *chuequin bebé*?",
-            "Yo solo escuché: chequito bebé 🍼",
-        ]
-        respuesta = random.choice(respuestas)
-        await update.message.reply_text(respuesta, parse_mode="Markdown")
+
+    # Si encuentra cualquier versión de la palabra "chueco"
+    if not re.search(PATRON_CHUECO, texto):
+        return
+
+    respuestas = [
+        "¿Quisiste decir *chequito bebé*?",
+        "Ufff, se te chuequeó 😳",
+        "¿Chueco? Yo diría *chequito exquisito* 😌",
+        "Aguas… eso sonó bien chueco 🤭",
+        "Confirmo: *chequito exquisito* 🍼",
+        "¿Estás hablando del *chuequin bebé*?",
+        "Yo solo escuché: chequito bebé 🍼",
+    ]
+    respuesta = random.choice(respuestas)
+    await update.message.reply_text(respuesta, parse_mode="Markdown")
 
 
 # --- HEALTHCHECK WEB PARA ZIMA ---
